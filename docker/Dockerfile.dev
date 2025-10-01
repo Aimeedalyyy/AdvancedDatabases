@@ -1,0 +1,8 @@
+FROM mcr.microsoft.com/devcontainers/base:debian
+
+# Install useful tools
+RUN apt-get update && apt-get install -y \
+    postgresql-client \
+    python3 python3-pip \
+    git curl vim \
+    && rm -rf /var/lib/apt/lists/*

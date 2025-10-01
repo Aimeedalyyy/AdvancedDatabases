@@ -1,0 +1,66 @@
+Option 3 – Creating a container in Visual Studio Code
+0. Install prerequisites
+   a. Docker Desktop (Windows/Mac) or Docker Engine (Linux) → https://www.docker.com/products/docker-desktop
+   b. Visual Studio Code → https://code.visualstudio.com/
+   c. VS Code extension: Dev Containers (from Microsoft) 
+   		In VS Code, go to Extensions (⇧⌘X / Ctrl+Shift+X) and search for Dev Containers. Install it.
+
+1.	Make a new folder, e.g. postgres-dev
+	Inside it, create a subfolder called .devcontainer
+	postgres-dev/
+  └── .devcontainer/
+
+
+2.	Download docker-postgres-compose.yml and devcontainer.json and put them in this sub-folder.
+
+4.	Open and review docker-postgres-compose.yml
+	Services: One for Postgres, one for PgAdmin
+	Container names: You can edit them if you want different names
+	Environment variables:
+	Change the passwords to something you want to use
+	For PgAdmin, set an email address (used as the login, doesn’t need to be real but must look valid, e.g. user@example.com)
+	Uses devuser (username) and devdb (database) instead of exposing Postgres defaults directly
+	Volumes: Ensures your database data is saved on your machine and persists between runs
+
+5.	Start Docker and open the project in VS Code
+	Make sure Docker is running
+	In VS Code open the folder you created in step 1 e.g. In VS Code: File → Open Folder… → select the outer folder postgres-dev
+
+	postgres-dev/      ← OPEN THIS in VS Code
+	  └── .devcontainer/
+	       ├── docker-postgres-compose.yml
+	       └── devcontainer.json
+
+6.   Reopen in Container
+	In the bottom-left corner of VS Code, click the >< icon (usually blue)
+	Select “Reopen in Container”
+	(If a prompt appears, accept it.)
+	VS Code will:
+		Build the dev workspace container.
+		Start postgres and pgadmin from the compose file.
+		Install the listed VS Code extensions inside the dev container.
+		Run the postCreateCommand to install psql.
+
+		First build can take a few minutes (images download).
+
+	Note: If VS Code prompts you to open as a workspace, click OK if you want to use the terminal in VS Code.
+		If you skip this, the dev container may still start, but you won’t get a terminal in VS Code.
+		Just click Local and select the postgres-dev folder to create a small workspace. 
+		The .code-workspace file just tells VS Code how to reopen the same folder setup in the future — it doesn’t affect Docker.
+
+
+7.	Verify that it is running 
+	In VS Code terminal (inside the dev container (bash)):
+	psql -h postgres -U devusr -d devdb -c '\l'
+	(Password: devpass)
+
+	Or open PgAdmin in your browser: http://localhost:8080
+	Login: email address set as username for pgadmin / password for pgadmin
+	Add a new server: Host = postgres, User = devuser, Password = devpass, Maintenance database = devdb.
+
+	You can also check Docker Desktop → Containers: you should see dev-container, dev-postgres, and dev-pgadmin.
+
+8. When you have finished working with PostgreSQL you can bring the container down:
+	In VS Code click the >< icon (usually blue) and choose Close Remote Connection
+	OR
+	In Docker Desktop -stop the containers 

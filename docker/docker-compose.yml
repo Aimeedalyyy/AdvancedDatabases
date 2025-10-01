@@ -1,0 +1,27 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:17
+    container_name: dev-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: devusr
+      POSTGRES_PASSWORD: devpass
+      POSTGRES_DB: devdb
+    ports:
+      - "5431:5432"   # host:container
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: dev-workspace
+    volumes:
+      - ..:/workspace:cached   # Mount project root into container
+    working_dir: /workspace
+    depends_on:
+      - postgres
+    command: sleep infinity    # keep container running so VS Code can attach
